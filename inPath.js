@@ -98,7 +98,7 @@ var readDir = function (path, cb) {
         }
         var l = things.length, thing;
         if (l === 0) {
-            directoryDone(l);
+            directoryDone(dirs, files);
         }
         while (l > 0) {
             thing = things[l - 1];
