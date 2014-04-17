@@ -29,9 +29,10 @@ var fileChannelWrap = createCallBackChannel(function () {
     'use strict';
     var l = allFiles.length - 1, p = 0;
     while (p <= l) {
-        console.log(allFiles[p]);
+        process.stdout.write(allFiles[p] + '\n');
         p = p + 1;
     }
+    process.exit(0);
 });
 
 
@@ -45,25 +46,31 @@ var readDir = function (path, cb) {
     var files = [],
         dirs = [],
         others = [],
-        directoryDone  = function (len) {
+        directoryDone  = function (directories, files) {
             // directoryDone is a question not a statement
-            var dirLen = dirs.length;
-            if (len <= 1) {
-                // now that the last thing has been checked
-                // the directory contents has been collected
-                // start reading child dirs
-                // then fire callback
-                while (dirLen > 0) {
-                    readDir(dirs[dirLen - 1], fileChannelWrap(cb));
-                    dirLen = dirLen - 1;
-                }
-                cb(files);
+            var dirLen = directories.length;
+            // now that the current directory has
+            // finished reading, loop child directories
+            // and recurse
+            while (dirLen > 0) {
+                readDir(
+                    directories[dirLen - 1],
+                    fileChannelWrap(cb)
+                );
+                dirLen = dirLen - 1;
             }
+            // pass files to the call-back that will
+            // do something with all the file paths
+            cb(files);
         },
         makeStatCB = function (thing, len) {
+            // generate a call-back that will be fed to
+            // fs.stat and fired when checking what a "thing"
+            // in a directory is (file, dir etc...)
             return function (err, stats) {
                 if (err !== null) {
                     console.error(err);
+                    process.exit(1);
                 }
                 if (stats.isFile()) {
                     files.push(path + thing);
@@ -72,13 +79,22 @@ var readDir = function (path, cb) {
                 } else {
                     others.push(path + thing);
                 }
-                directoryDone(len);
+                if (len <= 1) {
+                    // the directory has been read
+                    // now check child directories
+                    // and send the collected file paths on
+                    directoryDone(dirs, files);
+                }
             };
         };
 
     fs.readdir(path, function (err, things) {
+        // read a given directory and analise
+        // "things" within in it
         if (err !== null) {
+            // something bad occurred
             console.error(err);
+            process.exit(1);
         }
         var l = things.length, thing;
         if (l === 0) {
