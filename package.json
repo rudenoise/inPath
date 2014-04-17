@@ -1,0 +1,9 @@
+{
+    "name": "inPath",
+    "decription": "a console application that reads sub-directories and filters paths given an expression to match",
+    "devDependencies": {
+        "grunt-jslint": "1.1.4",
+        "grunt-contrib-watch": "0.3.1"
+    }
+}
+
