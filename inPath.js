@@ -3,6 +3,12 @@ var fs = require('fs'),
     startPath = process.argv[process.argv.length - 1];
 
 function createCallBackChannel(masterCallBack) {
+    // a mechanism to create a "channel"
+    // for nested/parallel callbacks to be wrapped in
+    // as the program runs
+    // more call backs can be added to the channel
+    // once the total callbacks registered and fired
+    // are equal fire the channel's callback
     'use strict';
     var totalCallBacksRegistered = 0,
         totalCallBacksFired = 0;
@@ -25,7 +31,13 @@ function createCallBackChannel(masterCallBack) {
 
 }
 
+// create a channel to wrap new callbacks
+// generated on a per directory basis
 var fileChannelWrap = createCallBackChannel(function () {
+    // all directories have been traversed
+    // and sub-directories recursed
+    // print out the paths of all found files
+    // the end
     'use strict';
     var l = allFiles.length - 1, p = 0;
     while (p <= l) {
@@ -37,11 +49,16 @@ var fileChannelWrap = createCallBackChannel(function () {
 
 
 function dirReadDone(filesList) {
+    // when a directory has been read
+    // feed its file paths here to be collated
     'use strict';
     allFiles = allFiles.concat(filesList);
 }
 
 var readDir = function (path, cb) {
+    // read the contents of a directory
+    // using the path and feed paths of files
+    // contained with in to the callback
     'use strict';
     var files = [],
         dirs = [],
@@ -53,6 +70,10 @@ var readDir = function (path, cb) {
             // finished reading, loop child directories
             // and recurse
             while (dirLen > 0) {
+                // recurse
+                // read the child directories
+                // and use the file channel to
+                // wrap/resister a new callback
                 readDir(
                     directories[dirLen - 1],
                     fileChannelWrap(cb)
@@ -68,6 +89,8 @@ var readDir = function (path, cb) {
             // fs.stat and fired when checking what a "thing"
             // in a directory is (file, dir etc...)
             return function (err, stats) {
+                // a function that is fired by fs.stat
+                // and collects files and directories
                 if (err !== null) {
                     console.error(err);
                     process.exit(1);
@@ -101,6 +124,8 @@ var readDir = function (path, cb) {
             directoryDone(dirs, files);
         }
         while (l > 0) {
+            // loop the "things" within current directory
+            // feed them to fs.stat to work out what they are
             thing = things[l - 1];
             fs.stat(path + thing, makeStatCB(thing, l));
             l = l - 1;
