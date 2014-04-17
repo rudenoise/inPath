@@ -1,5 +1,6 @@
-var fs = require('fs');
-var allFiles = [];
+var fs = require('fs'),
+    allFiles = [],
+    startPath = process.argv[process.argv.length - 1];
 
 function createCallBackChannel(masterCallBack) {
     'use strict';
@@ -34,15 +35,9 @@ var fileChannelWrap = createCallBackChannel(function () {
 });
 
 
-function dirCB(files) {
+function dirReadDone(filesList) {
     'use strict';
-    // args: path, files, dirs, others
-    //console.log('startPath: ', path);
-    //console.log('files: ', files.length);
-    allFiles = allFiles.concat(files);
-    //console.log('dirs: ', dirs);
-    //console.log('others: ', others);
-    //console.log('...............................');
+    allFiles = allFiles.concat(filesList);
 }
 
 var readDir = function (path, cb) {
@@ -50,9 +45,14 @@ var readDir = function (path, cb) {
     var files = [],
         dirs = [],
         others = [],
-        end  = function (len) {
+        directoryDone  = function (len) {
+            // directoryDone is a question not a statement
             var dirLen = dirs.length;
             if (len <= 1) {
+                // now that the last thing has been checked
+                // the directory contents has been collected
+                // start reading child dirs
+                // then fire callback
                 while (dirLen > 0) {
                     readDir(dirs[dirLen - 1], fileChannelWrap(cb));
                     dirLen = dirLen - 1;
@@ -72,7 +72,7 @@ var readDir = function (path, cb) {
                 } else {
                     others.push(path + thing);
                 }
-                end(len);
+                directoryDone(len);
             };
         };
 
@@ -82,7 +82,7 @@ var readDir = function (path, cb) {
         }
         var l = things.length, thing;
         if (l === 0) {
-            end(l);
+            directoryDone(l);
         }
         while (l > 0) {
             thing = things[l - 1];
@@ -92,6 +92,4 @@ var readDir = function (path, cb) {
     });
 };
 
-var startPath = process.argv[process.argv.length - 1];
-
-readDir(startPath, fileChannelWrap(dirCB));
+readDir(startPath, fileChannelWrap(dirReadDone));
