@@ -16,6 +16,8 @@ function createCallBackChannel(masterCallBack) {
     return function (fn) {
         totalCallBacksRegistered += 1;
         return fn.name !== '' ?
+                // not an anonimous function
+                // so wrap and track its execution
                 function () {
                     totalCallBacksFired += 1;
                     var argsArr = Array.prototype.slice.call(arguments, 0);
@@ -26,7 +28,10 @@ function createCallBackChannel(masterCallBack) {
                     ) {
                         masterCallBack();
                     }
-                } : fn;
+                } :
+                // the function is anon so it must have
+                // been wrapped already, don't interfere
+                fn;
     };
 
 }
