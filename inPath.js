@@ -1,9 +1,16 @@
 var startPath = process.argv[process.argv.length - 1],
-    readDir = require('readDirectory').readDir,
-    fileChannelWrap = require('readDirectory').fileChannelWrap,
-    dirReadDone = require('readDirectory').dirReadDone;
+    readDirectory = require('readDirectory').readDirectory;
+
+readDirectory(startPath, function (filePaths) {
+    'use strict';
+    var l = filePaths.length - 1, p = 0;
+    while (p <= l) {
+        process.stdout.write(filePaths[p] + '\n');
+        p = p + 1;
+    }
+    process.exit(0);
+});
 
 
 
 
-readDir(startPath, fileChannelWrap(dirReadDone));
