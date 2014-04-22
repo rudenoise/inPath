@@ -44,7 +44,7 @@ exports.readDirectory = function (startPath, callBack) {
         // send the final collection of file paths
         // to the callBack
         // the end
-        callBack(allFiles);
+        callBack(null, allFiles);
     });
 
     function dirReadDone(filesList) {

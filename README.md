@@ -2,8 +2,19 @@
 
 A node command-line tool for reading child directories.
 
-> npm install
+```bash
+git clone https://github.com/rudenoise/inPath.git
 
-> node inPath t/
+cd inPath
 
-> // t/sds.txt 
+npm install
+
+node inPath.js ../inPath
+
+../inPathreadDirectory.js
+../inPathpackage.json
+../inPathinPath.js
+../inPathREADME.md
+...
+
+```
