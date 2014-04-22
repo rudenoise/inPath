@@ -1,21 +1,46 @@
-var startPath = process.argv[process.argv.length - 1],
-    readDirectory = require('readDirectory');
+var args = process.argv.slice(2),
+    readDirectory = require('readDirectory'),
+    cli = require('cli'),
+    help = cli.help,
+    writeResults = cli.writeResults,
+    createReadDirectoryCallBack = cli.createReadDirectoryCallBack;
 
-readDirectory(startPath, function (err, filePaths) {
-    'use strict';
-    if (err !== null) {
-        console.error(err);
-        return process.exit(1);
-    
+
+if (args.length === 0) {
+    // was called by
+    // > node inPath.js
+    help();
+}
+
+if (args.length === 1) {
+    if (args[0] === '-h') {
+    // node inPath.js -h
+        help();
+    } else {
+        // node inPath.js <.path>
+        readDirectory(args[0], createReadDirectoryCallBack());
     }
-    var l = filePaths.length - 1, p = 0;
-    while (p <= l) {
-        process.stdout.write(filePaths[p] + '\n');
-        p = p + 1;
+}
+
+if (args.length === 2) {
+    // node inPath.js [regExp] <.path>
+    readDirectory(
+        args[1],
+        createReadDirectoryCallBack(new RegExp(args[0]))
+    );
+}
+
+/*
+loom into piped input...
+process.stdin.on('readable', function(chunk) {
+    var chunk = process.stdin.read();
+    if (chunk !== null) {
+        process.stdout.write('data: ' + chunk);
     }
-    return process.exit(0);
 });
 
+process.stdin.on('end', function () {
+    console.log('ended');
+});
 
-
-
+*/
