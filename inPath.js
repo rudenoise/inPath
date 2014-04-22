@@ -1,5 +1,5 @@
 var startPath = process.argv[process.argv.length - 1],
-    readDirectory = require('readDirectory').readDirectory;
+    readDirectory = require('readDirectory');
 
 readDirectory(startPath, function (err, filePaths) {
     'use strict';

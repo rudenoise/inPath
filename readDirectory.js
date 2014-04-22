@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-exports.readDirectory = function (startPath, callBack) {
+module.exports = function (startPath, callBack) {
     'use strict';
     var allFiles = [], fileChannelWrap;
     function createCallBackChannel(masterCallBack) {
