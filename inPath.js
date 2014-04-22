@@ -13,7 +13,7 @@ readDirectory(startPath, function (err, filePaths) {
         process.stdout.write(filePaths[p] + '\n');
         p = p + 1;
     }
-    process.exit(0);
+    return process.exit(0);
 });
 
 
