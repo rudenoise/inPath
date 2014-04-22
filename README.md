@@ -11,10 +11,10 @@ npm install
 
 node inPath.js ../inPath
 
-../inPathreadDirectory.js
-../inPathpackage.json
-../inPathinPath.js
-../inPathREADME.md
+../inPath/readDirectory.js
+../inPath/package.json
+../inPath/inPath.js
+../inPath/README.md
 ...
 
 ```
