@@ -1,8 +1,8 @@
-var allFiles = [],
-    fs = require('fs');
+var fs = require('fs');
 
 exports.readDirectory = function (startPath, callBack) {
     'use strict';
+    var allFiles = [], fileChannelWrap;
     function createCallBackChannel(masterCallBack) {
         // a mechanism to create a "channel"
         // for nested/parallel callbacks to be wrapped in
@@ -38,7 +38,7 @@ exports.readDirectory = function (startPath, callBack) {
 
     // create a channel to wrap new callbacks
     // generated on a per directory basis
-    var fileChannelWrap = createCallBackChannel(function () {
+    fileChannelWrap = createCallBackChannel(function () {
         // all directories have been traversed
         // and sub-directories recursed
         // send the final collection of file paths
@@ -89,8 +89,7 @@ exports.readDirectory = function (startPath, callBack) {
                     // a function that is fired by fs.stat
                     // and collects files and directories
                     if (err !== null) {
-                        console.error(err);
-                        process.exit(1);
+                        return callBack(err);
                     }
                     if (stats.isFile()) {
                         files.push(path + thing);
@@ -113,8 +112,7 @@ exports.readDirectory = function (startPath, callBack) {
             // "things" within in it
             if (err !== null) {
                 // something bad occurred
-                console.error(err);
-                process.exit(1);
+                return callBack(err, []);
             }
             var l = things.length, thing;
             if (l === 0) {
