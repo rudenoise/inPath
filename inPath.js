@@ -1,6 +1,6 @@
 var args = process.argv.slice(2),
-    readDirectory = require('readDirectory'),
-    cli = require('cli'),
+    readDirectory = require('./readDirectory.js'),
+    cli = require('./cli.js'),
     help = cli.help,
     writeResults = cli.writeResults,
     createReadDirectoryCallBack = cli.createReadDirectoryCallBack;
